@@ -1,0 +1,41 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+
+table(Customer) {
+  + CustomerID : int <<PK>>
+  FirstName : varchar(100)
+  LastName  : varchar(100)
+  Email     : varchar(100)
+  Email2    : varchar(255)
+}
+
+table(Order) {
+  + OrderID : int <<PK>>
+  CustomerID : int <<FK>>
+  OrderDate  : date
+}
+
+table(Product) {
+  + ProductID : int <<PK>>
+  ProductName : varchar(100)
+  Price       : decimal(10,2)
+  CategoryID  : int <<FK>>
+}
+
+table(OrderDetail) {
+  + OrderID : int <<PK,FK>>
+  + ProductID : int <<PK,FK>>
+  Quantity : int
+}
+
+table(Category) {
+  + CategoryID : int <<PK>>
+}
+
+
+Customer ||--{ Order : "1:N"
+Order ||--{ OrderDetail : "1:N"
+Product ||--{ OrderDetail : "1:N"
+Category ||--{ Product : "1:N"
+
+@enduml
