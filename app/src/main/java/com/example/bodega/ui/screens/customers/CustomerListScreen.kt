@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.ui.components.CustomerCard
 import com.example.bodega.ui.navigation.Screen
 import com.example.bodega.viewmodel.CustomerViewModel
@@ -25,6 +26,9 @@ fun CustomerListScreen(navController: NavController, viewModel: CustomerViewMode
     val customers by viewModel.allCustomers.collectAsState()
 
     Scaffold(
+        topBar = {
+            AppHeader(title = "bodega", subtitle = "Clientes")
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 navController.navigate("add_edit_customer")

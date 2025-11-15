@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.ui.components.ProductCard
 import com.example.bodega.viewmodel.ProductViewModel
 
@@ -22,6 +23,9 @@ fun ProductListScreen(navController: NavController, viewModel: ProductViewModel)
     val products by viewModel.allProducts.collectAsState()
 
     Scaffold(
+        topBar = {
+            AppHeader(title = "bodega", subtitle = "Productos")
+        },
         floatingActionButton = {
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp),

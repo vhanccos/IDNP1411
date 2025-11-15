@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.ui.components.OrderCard
 import com.example.bodega.ui.navigation.Screen
 import com.example.bodega.viewmodel.OrderViewModel
@@ -23,6 +24,9 @@ fun OrderListScreen(navController: NavController, viewModel: OrderViewModel) {
     val orders by viewModel.allOrderSummariesWithCustomer.collectAsState()
 
     Scaffold(
+        topBar = {
+            AppHeader(title = "bodega", subtitle = "Pedidos")
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 navController.navigate(Screen.NewOrder.route)

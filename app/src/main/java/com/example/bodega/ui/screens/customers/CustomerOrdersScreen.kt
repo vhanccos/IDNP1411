@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.ui.components.OrderCard
 import com.example.bodega.ui.navigation.Screen
 import com.example.bodega.viewmodel.CustomerViewModel
@@ -26,9 +27,11 @@ fun CustomerOrdersScreen(navController: NavController, customerViewModel: Custom
     val customer by customerViewModel.getCustomerById(customerId).collectAsState(initial = null)
     val orderSummaries by customerViewModel.getOrderSummariesForCustomer(customerId).collectAsState(initial = emptyList())
 
+    val customerName = customer?.let { "${it.firstName} ${it.lastName}" } ?: "Cliente"
+
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(customer?.let { "${it.firstName} ${it.lastName}" } ?: "Customer Orders") })
+            AppHeader(title = "bodega", subtitle = "Pedidos de $customerName")
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).padding(16.dp)) {

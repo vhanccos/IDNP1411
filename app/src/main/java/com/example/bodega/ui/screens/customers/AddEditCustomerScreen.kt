@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.bodega.data.database.entities.Customer
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.viewmodel.CustomerViewModel
 
 @Composable
@@ -48,72 +50,80 @@ fun AddEditCustomerScreen(navController: NavController, viewModel: CustomerViewM
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        OutlinedTextField(
-            value = firstName,
-            onValueChange = { firstName = it },
-            label = { Text("Nombre") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = lastName,
-            onValueChange = { lastName = it },
-            label = { Text("Apellido") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Correo Electrónico") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = address,
-            onValueChange = { address = it },
-            label = { Text("Dirección") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        OutlinedTextField(
-            value = phone,
-            onValueChange = { phone = it },
-            label = { Text("Teléfono") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Button(
-            onClick = {
-                if (customer == null) {
-                    viewModel.addCustomer(
-                        firstName = firstName,
-                        lastName = lastName,
-                        email = email,
-                        address = address,
-                        phone = phone
-                    )
-                } else {
-                    val updatedCustomer = customer!!.copy(
-                        firstName = firstName,
-                        lastName = lastName,
-                        email = email,
-                        address = address,
-                        phone = phone
-                    )
-                    viewModel.updateCustomer(updatedCustomer)
-                }
-                navController.popBackStack()
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (customer == null) "Agregar Cliente" else "Actualizar Cliente")
+    val screenTitle = if (customer == null) "Agregar Cliente" else "Actualizar Cliente"
+
+    Scaffold(
+        topBar = {
+            AppHeader(title = "bodega", subtitle = screenTitle)
         }
-        if (customer != null) {
+    ) { padding ->
+        Column(modifier = Modifier.padding(16.dp).padding(padding)) {
+            OutlinedTextField(
+                value = firstName,
+                onValueChange = { firstName = it },
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = lastName,
+                onValueChange = { lastName = it },
+                label = { Text("Apellido") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Correo Electrónico") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = address,
+                onValueChange = { address = it },
+                label = { Text("Dirección") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = { Text("Teléfono") },
+                modifier = Modifier.fillMaxWidth()
+            )
             Button(
                 onClick = {
-                    viewModel.deleteCustomer(customer!!)
+                    if (customer == null) {
+                        viewModel.addCustomer(
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            address = address,
+                            phone = phone
+                        )
+                    } else {
+                        val updatedCustomer = customer!!.copy(
+                            firstName = firstName,
+                            lastName = lastName,
+                            email = email,
+                            address = address,
+                            phone = phone
+                        )
+                        viewModel.updateCustomer(updatedCustomer)
+                    }
                     navController.popBackStack()
                 },
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Eliminar Cliente")
+                Text(if (customer == null) "Agregar Cliente" else "Actualizar Cliente")
+            }
+            if (customer != null) {
+                Button(
+                    onClick = {
+                        viewModel.deleteCustomer(customer!!)
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                ) {
+                    Text("Eliminar Cliente")
+                }
             }
         }
     }

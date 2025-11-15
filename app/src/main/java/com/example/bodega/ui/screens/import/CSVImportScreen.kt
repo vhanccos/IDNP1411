@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.viewmodel.ProductViewModel
 import kotlinx.coroutines.launch
 import java.io.BufferedReader
@@ -67,99 +68,100 @@ fun CSVImportScreen(navController: NavController, productViewModel: ProductViewM
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        // Header
-        Text(
-            text = "Importar CSV",
-            style = MaterialTheme.typography.headlineMedium
-        )
-
-        // Select CSV file button
-        Button(
-            onClick = { launcher.launch("text/csv") },
-            modifier = Modifier.fillMaxWidth()
+    Scaffold(
+        topBar = {
+            AppHeader(title = "bodega", subtitle = "Importar CSV")
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Seleccionar Archivo CSV")
-        }
-
-        // Display file name if selected
-        fileUri?.let { uri ->
-            val fileName = getFileName(uri, context)
-            Text(
-                text = "Archivo seleccionado: $fileName",
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
-
-        // Preview of CSV data
-        if (csvData.isNotEmpty()) {
-            Text(
-                text = "Vista previa de los datos:",
-                style = MaterialTheme.typography.titleMedium
-            )
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
+            // Select CSV file button
+            Button(
+                onClick = { launcher.launch("text/*") },
+                modifier = Modifier.fillMaxWidth()
             ) {
-                items(csvData) { row ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        row.forEach { cell ->
-                            Text(
-                                text = cell,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .padding(horizontal = 4.dp),
-                                maxLines = 1
-                            )
+                Text("Seleccionar Archivo CSV")
+            }
+
+            // Display file name if selected
+            fileUri?.let { uri ->
+                val fileName = getFileName(uri, context)
+                Text(
+                    text = "Archivo seleccionado: $fileName",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            // Preview of CSV data
+            if (csvData.isNotEmpty()) {
+                Text(
+                    text = "Vista previa de los datos:",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                ) {
+                    items(csvData) { row ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            row.forEach { cell ->
+                                Text(
+                                    text = cell,
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .padding(horizontal = 4.dp),
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 }
+
+                // Import button
+                Button(
+                    onClick = { showConfirmationDialog = true },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = csvData.size > 1 // At least header + 1 row of data
+                ) {
+                    Text("Importar Datos")
+                }
             }
 
-            // Import button
-            Button(
-                onClick = { showConfirmationDialog = true },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = csvData.size > 1 // At least header + 1 row of data
-            ) {
-                Text("Importar Datos")
+            // Confirmation Dialog
+            if (showConfirmationDialog) {
+                ImportConfirmationDialog(
+                    onConfirm = {
+                        showConfirmationDialog = false
+                        isLoading = true
+                        // Import the data using the ViewModel method
+                        productViewModel.importProductsFromCSV(csvData)
+                        isLoading = false
+                        navController.popBackStack()
+                    },
+                    onDismiss = { showConfirmationDialog = false }
+                )
             }
-        }
 
-        // Confirmation Dialog
-        if (showConfirmationDialog) {
-            ImportConfirmationDialog(
-                onConfirm = {
-                    showConfirmationDialog = false
-                    isLoading = true
-                    // Import the data using the ViewModel method
-                    productViewModel.importProductsFromCSV(csvData)
-                    isLoading = false
-                    navController.popBackStack()
-                },
-                onDismiss = { showConfirmationDialog = false }
-            )
-        }
-
-        // Loading indicator
-        if (isLoading) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
+            // Loading indicator
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
         }
     }

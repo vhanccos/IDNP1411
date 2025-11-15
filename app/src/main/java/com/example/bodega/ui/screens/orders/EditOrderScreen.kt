@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import com.example.bodega.ui.components.AppHeader
 import com.example.bodega.viewmodel.OrderViewModel
 import com.example.bodega.data.database.entities.Product
 import com.example.bodega.data.database.relations.OrderWithDetails
@@ -16,7 +17,7 @@ import com.example.bodega.data.database.relations.OrderWithDetails
 fun EditOrderScreen(navController: NavController, viewModel: OrderViewModel, orderId: Int) {
     val orderWithDetails by viewModel.getOrderWithDetails(orderId).collectAsState(initial = null)
     val allProducts by viewModel.allProducts.collectAsState()
-    
+
     var selectedProducts by remember { mutableStateOf<Map<Product, Int>>(emptyMap()) }
     var productExpanded by remember { mutableStateOf(false) }
     var selectedProductId by remember { mutableStateOf<Int?>(null) }
@@ -34,92 +35,98 @@ fun EditOrderScreen(navController: NavController, viewModel: OrderViewModel, ord
         }
     }
 
-    Column(modifier = Modifier.padding(16.dp)) {
-        orderWithDetails?.let { orderData ->
-            Text("Editando Pedido #${orderData.order.orderId}", style = MaterialTheme.typography.headlineSmall)
-            Spacer(modifier = Modifier.height(16.dp))
+    Scaffold(
+        topBar = {
+            AppHeader(title = "bodega", subtitle = "Editar Pedido")
+        }
+    ) { padding ->
+        Column(modifier = Modifier.padding(16.dp).padding(padding)) {
+            orderWithDetails?.let { orderData ->
+                Text("Editando Pedido #${orderData.order.orderId}", style = MaterialTheme.typography.headlineSmall)
+                Spacer(modifier = Modifier.height(16.dp))
 
-            // Product selection
-            ExposedDropdownMenuBox(
-                expanded = productExpanded,
-                onExpandedChange = { productExpanded = !productExpanded },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                OutlinedTextField(
-                    value = selectedProductId?.let { allProducts.find { p -> p.productId == it }?.name } ?: "",
-                    onValueChange = {},
-                    label = { Text("Seleccionar Producto") },
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = productExpanded) },
-                    modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
-                )
-                DropdownMenu(
+                // Product selection
+                ExposedDropdownMenuBox(
                     expanded = productExpanded,
-                    onDismissRequest = { productExpanded = false }
+                    onExpandedChange = { productExpanded = !productExpanded },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    allProducts.forEach { product ->
-                        DropdownMenuItem(
-                            text = { Text("${product.name} - S/ ${product.price}") },
-                            onClick = {
-                                selectedProductId = product.productId
-                                productExpanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            OutlinedTextField(
-                value = quantity,
-                onValueChange = { quantity = it },
-                label = { Text("Cantidad") },
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
-            )
-
-            Button(
-                onClick = {
-                    selectedProductId?.let { productId ->
-                        val qty = quantity.toIntOrNull() ?: 1
-                        allProducts.find { it.productId == productId }?.let { product ->
-                            selectedProducts = selectedProducts + (product to qty)
+                    OutlinedTextField(
+                        value = selectedProductId?.let { allProducts.find { p -> p.productId == it }?.name } ?: "",
+                        onValueChange = {},
+                        label = { Text("Seleccionar Producto") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = productExpanded) },
+                        modifier = Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                    )
+                    DropdownMenu(
+                        expanded = productExpanded,
+                        onDismissRequest = { productExpanded = false }
+                    ) {
+                        allProducts.forEach { product ->
+                            DropdownMenuItem(
+                                text = { Text("${product.name} - S/ ${product.price}") },
+                                onClick = {
+                                    selectedProductId = product.productId
+                                    productExpanded = false
+                                }
+                            )
                         }
                     }
-                },
-                enabled = selectedProductId != null && quantity.toIntOrNull() != null
-            ) {
-                Text("Añadir/Actualizar Producto")
-            }
+                }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Text("Productos en el pedido:", style = MaterialTheme.typography.titleMedium)
-            selectedProducts.forEach { (product, qty) ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                OutlinedTextField(
+                    value = quantity,
+                    onValueChange = { quantity = it },
+                    label = { Text("Cantidad") },
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                )
+
+                Button(
+                    onClick = {
+                        selectedProductId?.let { productId ->
+                            val qty = quantity.toIntOrNull() ?: 1
+                            allProducts.find { it.productId == productId }?.let { product ->
+                                selectedProducts = selectedProducts + (product to qty)
+                            }
+                        }
+                    },
+                    enabled = selectedProductId != null && quantity.toIntOrNull() != null
                 ) {
-                    Text("${product.name} x$qty")
-                    Button(onClick = {
-                        selectedProducts = selectedProducts - product
-                    }) {
-                        Text("Quitar")
+                    Text("Añadir/Actualizar Producto")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("Productos en el pedido:", style = MaterialTheme.typography.titleMedium)
+                selectedProducts.forEach { (product, qty) ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("${product.name} x$qty")
+                        Button(onClick = {
+                            selectedProducts = selectedProducts - product
+                        }) {
+                            Text("Quitar")
+                        }
                     }
                 }
-            }
 
-            val total = selectedProducts.entries.sumOf { (product, qty) ->
-                product.price * qty.toBigDecimal()
-            }
-            Text(text = "Total: S/ $total", style = MaterialTheme.typography.headlineSmall)
+                val total = selectedProducts.entries.sumOf { (product, qty) ->
+                    product.price * qty.toBigDecimal()
+                }
+                Text(text = "Total: S/ $total", style = MaterialTheme.typography.headlineSmall)
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = {
-                    viewModel.updateOrderWithDetails(orderData.order, selectedProducts)
-                    navController.popBackStack()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Guardar Cambios")
-            }
-        } ?: Text("Cargando pedido...")
+                Spacer(modifier = Modifier.height(16.dp))
+                Button(
+                    onClick = {
+                        viewModel.updateOrderWithDetails(orderData.order, selectedProducts)
+                        navController.popBackStack()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Guardar Cambios")
+                }
+            } ?: Text("Cargando pedido...")
+        }
     }
 }
