@@ -21,6 +21,7 @@ Una de las características clave es la **funcionalidad de importación de datos
 Además, la app incluye **consultas relacionales** para mostrar información detallada como pedidos de clientes específicos y relaciones de productos con pedidos, cumpliendo con los requerimientos de consultas tipo 1-n y n-m.
 
 ![ERD](./erd.png)
+![ERD_PROPIO](./erd_propio.png)
 
 ---
 
