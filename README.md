@@ -20,10 +20,8 @@ La aplicación permite la administración completa de:
 Una de las características clave es la **funcionalidad de importación de datos desde archivos CSV**, permitiendo la carga inicial de productos de manera masiva.
 Además, la app incluye **consultas relacionales** para mostrar información detallada como pedidos de clientes específicos y relaciones de productos con pedidos, cumpliendo con los requerimientos de consultas tipo 1-n y n-m.
 
-<p align="center">
-  <img src="./erd.png" alt="ERD"/>
-  <img src="./erd_propio.png" alt="ERD_PROPIO"/>
-</p>
+  <img align="center" src="./erd.png" alt="ERD"/>
+  <img align="center" src="./erd_propio.png" alt="ERD_PROPIO"/>
 
 ---
 
