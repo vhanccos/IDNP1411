@@ -3,11 +3,14 @@ package com.example.bodega.data.repository
 import com.example.bodega.data.database.entities.Category
 import com.example.bodega.data.database.entities.Customer
 import com.example.bodega.data.database.entities.Order
+import com.example.bodega.data.database.entities.OrderDetail
 import com.example.bodega.data.database.entities.Product
 import com.example.bodega.data.database.relations.CategoryWithProducts
 import com.example.bodega.data.database.relations.CustomerWithOrders
 import com.example.bodega.data.database.relations.OrderWithDetails
 import com.example.bodega.data.database.relations.OrderWithProducts
+import com.example.bodega.data.database.relations.OrderSummaryWithCustomer
+import com.example.bodega.data.database.relations.OrderSummary
 import kotlinx.coroutines.flow.Flow
 
 interface BodegaRepository {
@@ -35,13 +38,18 @@ interface BodegaRepository {
     suspend fun getCategoryCount(): Int
     suspend fun getCustomerCount(): Int
     suspend fun getProductCount(): Int
+    suspend fun getOrderCount(): Int
+    suspend fun getOrderDetailCount(): Int
 
     // Order
     fun getAllOrders(): Flow<List<Order>>
     fun getAllOrdersWithDetails(): Flow<List<OrderWithDetails>>
-    fun getAllOrdersWithCustomer(): Flow<List<com.example.bodega.data.database.relations.OrderWithCustomer>>
+    fun getAllOrderSummariesWithCustomer(): Flow<List<OrderSummaryWithCustomer>>
+    fun getOrderSummariesForCustomer(customerId: Int): Flow<List<OrderSummary>>
     fun getOrderWithProducts(orderId: Int): Flow<OrderWithProducts>
     fun getOrderWithDetails(orderId: Int): Flow<OrderWithDetails>
+    suspend fun insertOrder(order: Order): Long
+    suspend fun insertOrderDetail(orderDetail: OrderDetail)
     suspend fun insertOrderWithDetails(order: Order, products: Map<Product, Int>)
     suspend fun updateOrderWithDetails(order: Order, products: Map<Product, Int>)
     suspend fun updateOrder(order: Order)

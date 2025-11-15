@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Upload
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,10 +23,23 @@ fun ProductListScreen(navController: NavController, viewModel: ProductViewModel)
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                navController.navigate("add_edit_product")
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar Producto")
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = androidx.compose.ui.Alignment.End
+            ) {
+                FloatingActionButton(
+                    onClick = {
+                        navController.navigate("csv_import")
+                    },
+                    content = {
+                        Icon(Icons.Default.Upload, contentDescription = "Importar CSV")
+                    }
+                )
+                FloatingActionButton(onClick = {
+                    navController.navigate("add_edit_product")
+                }) {
+                    Icon(Icons.Default.Add, contentDescription = "Agregar Producto")
+                }
             }
         }
     ) { padding ->

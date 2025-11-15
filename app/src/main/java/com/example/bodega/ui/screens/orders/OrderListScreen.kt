@@ -20,7 +20,7 @@ import com.example.bodega.viewmodel.OrderViewModel
 
 @Composable
 fun OrderListScreen(navController: NavController, viewModel: OrderViewModel) {
-    val orders by viewModel.allOrdersWithCustomer.collectAsState()
+    val orders by viewModel.allOrderSummariesWithCustomer.collectAsState()
 
     Scaffold(
         floatingActionButton = {
@@ -32,18 +32,24 @@ fun OrderListScreen(navController: NavController, viewModel: OrderViewModel) {
         }
     ) { padding ->
         LazyColumn(modifier = Modifier.padding(padding)) {
-            items(orders) { order ->
+            items(orders) { orderSummary ->
                 OrderCard(
-                    order = order,
+                    order = orderSummary,
                     modifier = Modifier.padding(8.dp),
                     onClick = {
-                        navController.navigate(Screen.OrderDetail.createRoute(order.order.orderId))
+                        navController.navigate(Screen.OrderDetail.createRoute(orderSummary.orderId))
                     },
                     onEdit = {
-                        navController.navigate("edit_order/${order.order.orderId}")
+                        navController.navigate("edit_order/${orderSummary.orderId}")
                     },
                     onDelete = {
-                        viewModel.deleteOrderWithDetails(order.order)
+                        viewModel.deleteOrderWithDetails(
+                            com.example.bodega.data.database.entities.Order(
+                                orderId = orderSummary.orderId,
+                                customerId = orderSummary.customer.customerId,
+                                orderDate = orderSummary.orderDate
+                            )
+                        )
                     }
                 )
             }

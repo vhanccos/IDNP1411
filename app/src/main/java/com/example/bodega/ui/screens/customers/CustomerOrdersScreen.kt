@@ -17,35 +17,47 @@ import androidx.navigation.NavController
 import com.example.bodega.ui.components.OrderCard
 import com.example.bodega.ui.navigation.Screen
 import com.example.bodega.viewmodel.CustomerViewModel
-import com.example.bodega.data.database.relations.OrderWithCustomer
+import com.example.bodega.data.database.relations.OrderSummaryWithCustomer
 import com.example.bodega.viewmodel.OrderViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomerOrdersScreen(navController: NavController, customerViewModel: CustomerViewModel, orderViewModel: OrderViewModel, customerId: Int) {
-    val customerWithOrders by customerViewModel.getCustomerWithOrders(customerId).collectAsState(initial = null)
+    val customer by customerViewModel.getCustomerById(customerId).collectAsState(initial = null)
+    val orderSummaries by customerViewModel.getOrderSummariesForCustomer(customerId).collectAsState(initial = emptyList())
 
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text(customerWithOrders?.customer?.let { "${it.firstName} ${it.lastName}" } ?: "Customer Orders") })
+            TopAppBar(title = { Text(customer?.let { "${it.firstName} ${it.lastName}" } ?: "Customer Orders") })
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-            customerWithOrders?.let { customerDetails ->
+            customer?.let { cust ->
                 LazyColumn {
-                    items(customerDetails.orders) { order ->
-                        val orderWithCustomer = OrderWithCustomer(order = order, customer = customerDetails.customer)
+                    items(orderSummaries) { orderSummary ->
+                        val orderSummaryWithCustomer = OrderSummaryWithCustomer(
+                            orderId = orderSummary.orderId,
+                            orderDate = orderSummary.orderDate,
+                            total = orderSummary.total,
+                            customer = cust
+                        )
                         OrderCard(
-                            order = orderWithCustomer,
+                            order = orderSummaryWithCustomer,
                             modifier = Modifier.padding(8.dp),
                             onClick = {
-                                navController.navigate(Screen.OrderDetail.createRoute(order.orderId))
+                                navController.navigate(Screen.OrderDetail.createRoute(orderSummary.orderId))
                             },
                             onEdit = {
-                                navController.navigate(Screen.EditOrder.createRoute(order.orderId))
+                                navController.navigate(Screen.EditOrder.createRoute(orderSummary.orderId))
                             },
                             onDelete = {
-                                orderViewModel.deleteOrderWithDetails(order)
+                                orderViewModel.deleteOrderWithDetails(
+                                    com.example.bodega.data.database.entities.Order(
+                                        orderId = orderSummary.orderId,
+                                        customerId = cust.customerId,
+                                        orderDate = orderSummary.orderDate
+                                    )
+                                )
                             }
                         )
                     }

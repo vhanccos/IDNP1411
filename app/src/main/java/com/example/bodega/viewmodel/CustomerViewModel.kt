@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.bodega.data.database.entities.Customer
 import com.example.bodega.data.database.relations.CustomerWithOrders
+import com.example.bodega.data.database.relations.OrderSummary
 import com.example.bodega.data.repository.BodegaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -47,6 +48,10 @@ class CustomerViewModel(private val repository: BodegaRepository) : ViewModel() 
 
     fun getCustomerWithOrders(customerId: Int): Flow<CustomerWithOrders> {
         return repository.getCustomerWithOrders(customerId)
+    }
+
+    fun getOrderSummariesForCustomer(customerId: Int): Flow<List<OrderSummary>> {
+        return repository.getOrderSummariesForCustomer(customerId)
     }
 
     fun getCustomerById(customerId: Int): Flow<Customer> {

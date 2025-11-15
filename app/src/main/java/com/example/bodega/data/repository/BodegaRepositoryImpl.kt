@@ -13,6 +13,8 @@ import com.example.bodega.data.database.relations.CategoryWithProducts
 import com.example.bodega.data.database.relations.CustomerWithOrders
 import com.example.bodega.data.database.relations.OrderWithDetails
 import com.example.bodega.data.database.relations.OrderWithProducts
+import com.example.bodega.data.database.relations.OrderSummaryWithCustomer
+import com.example.bodega.data.database.relations.OrderSummary
 import kotlinx.coroutines.flow.Flow
 
 class BodegaRepositoryImpl(
@@ -70,6 +72,10 @@ class BodegaRepositoryImpl(
 
         override suspend fun getProductCount(): Int = productDao.getProductCount()
 
+        override suspend fun getOrderCount(): Int = orderDao.getOrderCount()
+
+        override suspend fun getOrderDetailCount(): Int = orderDao.getOrderDetailCount()
+
 
         // Order
 
@@ -79,10 +85,16 @@ class BodegaRepositoryImpl(
 
         override fun getAllOrdersWithDetails(): Flow<List<com.example.bodega.data.database.relations.OrderWithDetails>> = orderDao.getAllOrdersWithDetails()
 
-        override fun getAllOrdersWithCustomer(): Flow<List<com.example.bodega.data.database.relations.OrderWithCustomer>> = orderDao.getAllOrdersWithCustomer()
+        override fun getAllOrderSummariesWithCustomer(): Flow<List<OrderSummaryWithCustomer>> = orderDao.getAllOrderSummariesWithCustomer()
+
+        override fun getOrderSummariesForCustomer(customerId: Int): Flow<List<OrderSummary>> = orderDao.getOrderSummariesForCustomer(customerId)
 
 
         override fun getOrderWithDetails(orderId: Int): Flow<OrderWithDetails> = orderDao.getOrderWithDetails(orderId)
+
+        override suspend fun insertOrder(order: Order): Long = orderDao.insertOrder(order)
+
+        override suspend fun insertOrderDetail(orderDetail: OrderDetail) = orderDao.insertOrderDetail(orderDetail)
 
         override suspend fun insertOrderWithDetails(order: Order, products: Map<Product, Int>) {
 

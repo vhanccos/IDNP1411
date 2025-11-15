@@ -140,6 +140,10 @@ fun NewOrderScreen(navController: NavController, viewModel: OrderViewModel) {
             selectedProducts.forEach { (product, qty) ->
                 Text("${product.name} x$qty - S/ ${product.price * qty.toBigDecimal()}")
             }
+            val total = selectedProducts.entries.sumOf { (product, qty) ->
+                product.price * qty.toBigDecimal()
+            }
+            Text(text = "Total: S/ $total", style = androidx.compose.material3.MaterialTheme.typography.headlineSmall)
         }
 
         // Save order button

@@ -26,6 +26,7 @@ import com.example.bodega.ui.navigation.Screen
 import com.example.bodega.ui.screens.customers.AddEditCustomerScreen
 import com.example.bodega.ui.screens.customers.CustomerListScreen
 import com.example.bodega.ui.screens.customers.CustomerOrdersScreen
+import com.example.bodega.ui.screens.import.CSVImportScreen
 import com.example.bodega.ui.screens.orders.NewOrderScreen
 import com.example.bodega.ui.screens.orders.OrderDetailScreen
 import com.example.bodega.ui.screens.orders.EditOrderScreen
@@ -145,6 +146,10 @@ fun MainScreen(viewModelFactory: ViewModelFactory) {
                 if (customerId != null) {
                     CustomerOrdersScreen(navController, customerViewModel, orderViewModel, customerId)
                 }
+            }
+            composable("csv_import") {
+                val viewModel: ProductViewModel = viewModel(factory = viewModelFactory)
+                CSVImportScreen(navController = navController, productViewModel = viewModel)
             }
         }
     }

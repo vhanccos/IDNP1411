@@ -11,6 +11,8 @@ import com.example.bodega.data.database.entities.Order
 import com.example.bodega.data.database.entities.OrderDetail
 import com.example.bodega.data.database.relations.OrderWithProducts
 import com.example.bodega.data.database.relations.OrderWithDetails
+import com.example.bodega.data.database.relations.OrderSummaryWithCustomer
+import com.example.bodega.data.database.relations.OrderSummary
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -41,6 +43,17 @@ interface OrderDao {
     fun getAllOrders(): Flow<List<Order>>
 
     @Transaction
+    @Query("""
+        SELECT o.orderId, o.orderDate, SUM(p.price * od.quantity) as total, c.*
+        FROM orders o
+        JOIN order_details od ON o.orderId = od.orderId
+        JOIN products p ON od.productId = p.productId
+        JOIN customers c ON o.customerId = c.customerId
+        GROUP BY o.orderId
+    """)
+    fun getAllOrderSummariesWithCustomer(): Flow<List<OrderSummaryWithCustomer>>
+
+    @Transaction
     @Query("SELECT * FROM orders")
     fun getAllOrdersWithCustomer(): Flow<List<com.example.bodega.data.database.relations.OrderWithCustomer>>
 
@@ -55,4 +68,21 @@ interface OrderDao {
     @Transaction
     @Query("SELECT * FROM orders WHERE orderId = :orderId")
     fun getOrderWithDetails(orderId: Int): Flow<OrderWithDetails>
+
+    @Transaction
+    @Query("""
+        SELECT o.orderId, o.customerId, o.orderDate, SUM(p.price * od.quantity) as total
+        FROM orders o
+        JOIN order_details od ON o.orderId = od.orderId
+        JOIN products p ON od.productId = p.productId
+        WHERE o.customerId = :customerId
+        GROUP BY o.orderId
+    """)
+    fun getOrderSummariesForCustomer(customerId: Int): Flow<List<OrderSummary>>
+
+    @Query("SELECT COUNT(*) FROM orders")
+    suspend fun getOrderCount(): Int
+
+    @Query("SELECT COUNT(*) FROM order_details")
+    suspend fun getOrderDetailCount(): Int
 }

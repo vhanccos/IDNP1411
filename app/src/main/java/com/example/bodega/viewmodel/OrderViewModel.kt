@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import com.example.bodega.data.database.relations.OrderWithProducts
 import com.example.bodega.data.database.relations.OrderWithDetails
+import com.example.bodega.data.database.relations.OrderSummaryWithCustomer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.util.Date
@@ -33,7 +34,7 @@ class OrderViewModel(private val repository: BodegaRepository) : ViewModel() {
             initialValue = emptyList()
         )
 
-    val allOrdersWithCustomer = repository.getAllOrdersWithCustomer()
+    val allOrderSummariesWithCustomer = repository.getAllOrderSummariesWithCustomer()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

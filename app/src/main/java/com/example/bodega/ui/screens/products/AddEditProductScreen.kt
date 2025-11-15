@@ -48,25 +48,10 @@ fun AddEditProductScreen(navController: NavController, viewModel: ProductViewMod
 
     Scaffold(
         floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            FloatingActionButton(
+                onClick = { navController.popBackStack() }
             ) {
-                // CSV Import FAB
-                FloatingActionButton(
-                    onClick = { navController.navigate(Screen.CSVImport.route) },
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary
-                ) {
-                    Icon(Icons.Default.Upload, contentDescription = "Importar CSV")
-                }
-
-                // Back button FAB
-                FloatingActionButton(
-                    onClick = { navController.popBackStack() }
-                ) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
-                }
+                Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
             }
         }
     ) { padding ->

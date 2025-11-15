@@ -105,6 +105,11 @@ fun EditOrderScreen(navController: NavController, viewModel: OrderViewModel, ord
                 }
             }
 
+            val total = selectedProducts.entries.sumOf { (product, qty) ->
+                product.price * qty.toBigDecimal()
+            }
+            Text(text = "Total: S/ $total", style = MaterialTheme.typography.headlineSmall)
+
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = {
