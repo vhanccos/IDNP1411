@@ -45,9 +45,11 @@ fun CustomerListScreen(navController: NavController, viewModel: CustomerViewMode
                     onClick = {
                         navController.navigate(Screen.CustomerOrders.createRoute(customer.customerId))
                     },
-                    onLongClick = {
-                        Log.d("CustomerListScreen", "Long press on customer with id: ${customer.customerId}")
+                    onEdit = {
                         navController.navigate("add_edit_customer/${customer.customerId}")
+                    },
+                    onDelete = {
+                        viewModel.deleteCustomer(customer)
                     }
                 )
             }

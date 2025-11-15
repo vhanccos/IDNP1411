@@ -53,9 +53,11 @@ fun ProductListScreen(navController: NavController, viewModel: ProductViewModel)
                     product = product,
                     modifier = Modifier.padding(8.dp),
                     onClick = { /* Handle regular click if needed */ },
-                    onLongClick = {
-                        Log.d("ProductListScreen", "Long press on product with id: ${product.productId}")
+                    onEdit = {
                         navController.navigate("add_edit_product/${product.productId}")
+                    },
+                    onDelete = {
+                        viewModel.deleteProduct(product)
                     }
                 )
             }
