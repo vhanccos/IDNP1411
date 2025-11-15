@@ -1,5 +1,13 @@
 # 🏪 Sistema de Gestión de Bodega
 
+## Integrantes
+
+- Carrasco Choque, Arles Melvin
+- Chancuaña Alvis, Klismann
+- Hancco Soncco, Vladimir Jaward
+- Hanccoccallo Achircana, Frank Duks
+- Nina Suyo, Diego Claudio
+
 ## 📘 Resumen Ejecutivo
 
 Este proyecto es una **aplicación móvil Android**, desarrollada en **Kotlin con Jetpack Compose**, diseñada para la **gestión eficiente de una bodega**.
